@@ -14,6 +14,10 @@ public class PlankSpawn : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		GenerateTallTower();
+	}
+
+	void GenerateTallTower() {
 		length = plankPrefab.transform.localScale.x;
 		width = plankPrefab.transform.localScale.z;
 		height = plankPrefab.transform.localScale.y;
@@ -44,21 +48,25 @@ public class PlankSpawn : MonoBehaviour {
 	}
 
 	GameObject createNewLeft(GameObject oldCenter) {
-		Vector3 left = oldCenter.transform.position + (2 * width) * Vector3.forward;
-		GameObject newLeft = (GameObject)Instantiate(plankPrefab, left, Quaternion.identity);
+		GameObject newLeft = createPlank(oldCenter);
+		newLeft.transform.position += (2 * width) * Vector3.forward;
 		return newLeft;
 	}
 
 	GameObject createNewRight(GameObject oldCenter) {
-		Vector3 right = oldCenter.transform.position + (2 * width) * Vector3.back;
-		GameObject newRight = (GameObject)Instantiate(plankPrefab, right, Quaternion.identity);
+		GameObject newRight = createPlank(oldCenter);
+		newRight.transform.position += (2 * width) * Vector3.back;
 		return newRight;
 	}
 
 	GameObject createNewCenter(GameObject oldCenter) {
+		return createPlank(oldCenter);
+	}
+
+	GameObject createPlank(GameObject oldCenter){
 		Vector3 center = oldCenter.transform.position;
-		GameObject newCenter = (GameObject)Instantiate(plankPrefab, center, Quaternion.identity);
-		return newCenter;
+		GameObject newPlank = (GameObject)Instantiate(plankPrefab, center, Quaternion.identity);
+		return newPlank;
 	}
 
 	GameObject createRaisedPlank(GameObject oldCenter) {
