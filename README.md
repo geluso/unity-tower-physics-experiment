@@ -26,12 +26,14 @@ My assumption was incorrect. Although I think the script arranges the planks
 perfectly the entire tower still "falls down" and squishes in on itself when
 the scene first starts.
 
-I also tried editing the physics settings for the project. 
+I also tried editing the physics settings for the project. Increasing the
+**sleep threshold** was the most successful tweak. Sleep Threshold is .005
+by default. Changing it to 1 actually made even 160 tall giant towers stand
+in the beginning!
+
 * Setting **gravity** to zero absolutely eliminates the initial tower drop down
   and settle in effect. Pieces just hang there in mid air. There's no cannon
   in this experiment, but it's unlikely zero gravity would be a good thing.
-* increasing the **sleep threshold** would make certain pieces freeze in mid air
-  while the tower was still settling.
 * **Enable Adaptive Forces** had no observable effect.
 * changing **bounce threshold** had no real effect.
 * changing **default contact offset** had no real effect.
