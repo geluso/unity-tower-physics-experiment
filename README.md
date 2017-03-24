@@ -1,4 +1,7 @@
 # Jenga Plank Tower Physics Expirement
+
+![towers collapsing](tower-collapse.png)
+
 This project uses a world script to generate a jenga tower from a plank prefab.
 The world scene starts with one plank placed as a "reference origin" plank. The
 script takes a reference to the origin plank and the plank prefab. The script
