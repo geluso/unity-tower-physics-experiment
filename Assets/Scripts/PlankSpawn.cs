@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlankSpawn : MonoBehaviour {
-
-	public GameObject originPlank;
+	public Transform originPlank;
 	public GameObject plankPrefab;
 	public int TowerHeight;
+
+	public bool isGrid;
+	public int gridWidth;
+	public int gridLength;
+	public float gridHeightDecay;
 
 	float length;
 	float width;
@@ -14,17 +18,31 @@ public class PlankSpawn : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GenerateTallTower();
+		if (isGrid) {
+			GenerateTowerGrid(originPlank);
+		} else {
+			GenerateTallTower(originPlank.transform);
+		}
 	}
 
-	void GenerateTallTower() {
+	void GenerateTowerGrid(Transform origin) {
+		GenerateTallTower(origin);
+
+		for (int x = -gridWidth / 2; x < gridWidth / 2; x++) {
+			for (int z = -gridLength / 2; z < gridLength / 2; z++) {
+
+			}
+		}
+	}
+
+	void GenerateTallTower(Transform origin) {
 		length = plankPrefab.transform.localScale.x;
 		width = plankPrefab.transform.localScale.z;
 		height = plankPrefab.transform.localScale.y;
 
-		GameObject oldCenter = originPlank;
-		GameObject oldLeft = createNewLeft(oldCenter);
-		GameObject oldRight = createNewRight(oldCenter);
+		Transform oldCenter = origin;
+		Transform oldLeft = createNewLeft(oldCenter);
+		Transform oldRight = createNewRight(oldCenter);
 
 		float rotationIncrement = 90f;
 		float rotation = rotationIncrement;
@@ -35,46 +53,37 @@ public class PlankSpawn : MonoBehaviour {
 			oldCenter = createNewCenter(oldCenter);
 			oldRight = createNewRight(oldCenter);
 
-			oldLeft.transform.position += elevationIncrement;
-			oldCenter.transform.position += elevationIncrement;
-			oldRight.transform.position += elevationIncrement;
+			oldLeft.position += elevationIncrement;
+			oldCenter.position += elevationIncrement;
+			oldRight.position += elevationIncrement;
 
-			oldLeft.transform.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
-			oldCenter.transform.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
-			oldRight.transform.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
+			oldLeft.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
+			oldCenter.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
+			oldRight.RotateAround(oldCenter.transform.position, Vector3.up, rotation);
 
 			rotation += rotationIncrement;
 		}
 	}
 
-	GameObject createNewLeft(GameObject oldCenter) {
-		GameObject newLeft = createPlank(oldCenter);
-		newLeft.transform.position += (2 * width) * Vector3.forward;
+	Transform createNewLeft(Transform oldCenter) {
+		Transform newLeft = createPlank(oldCenter);
+		newLeft.position += (2 * width) * Vector3.forward;
 		return newLeft;
 	}
 
-	GameObject createNewRight(GameObject oldCenter) {
-		GameObject newRight = createPlank(oldCenter);
-		newRight.transform.position += (2 * width) * Vector3.back;
+	Transform createNewRight(Transform oldCenter) {
+		Transform newRight = createPlank(oldCenter);
+		newRight.position += (2 * width) * Vector3.back;
 		return newRight;
 	}
 
-	GameObject createNewCenter(GameObject oldCenter) {
+	Transform createNewCenter(Transform oldCenter) {
 		return createPlank(oldCenter);
 	}
 
-	GameObject createPlank(GameObject oldCenter){
+	Transform createPlank(Transform oldCenter){
 		Vector3 center = oldCenter.transform.position;
 		GameObject newPlank = (GameObject)Instantiate(plankPrefab, center, Quaternion.identity);
-		return newPlank;
-	}
-
-	GameObject createRaisedPlank(GameObject oldCenter) {
-		return null;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+		return newPlank.transform;
 	}
 }
