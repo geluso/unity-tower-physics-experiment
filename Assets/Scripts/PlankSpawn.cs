@@ -18,28 +18,35 @@ public class PlankSpawn : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (isGrid) {
-			GenerateTowerGrid(originPlank);
-		} else {
-			GenerateTallTower(originPlank.transform);
-		}
-	}
-
-	void GenerateTowerGrid(Transform origin) {
-		GenerateTallTower(origin);
-
-		for (int x = -gridWidth / 2; x < gridWidth / 2; x++) {
-			for (int z = -gridLength / 2; z < gridLength / 2; z++) {
-
-			}
-		}
-	}
-
-	void GenerateTallTower(Transform origin) {
 		length = plankPrefab.transform.localScale.x;
 		width = plankPrefab.transform.localScale.z;
 		height = plankPrefab.transform.localScale.y;
 
+		if (isGrid) {
+			GenerateTowerGrid(originPlank);
+		} else {
+			GenerateTallTower(originPlank.transform, TowerHeight);
+		}
+	}
+
+	void GenerateTowerGrid(Transform origin) {
+		//GenerateTallTower(origin);
+
+		Vector3 originalPosition = new Vector3(origin.position.x, origin.position.y, origin.position.z);
+		float currentHeight = TowerHeight;
+
+		for (int x = -gridWidth; x < gridWidth; x++) {
+			for (int z = -gridLength; z < gridLength; z++) {
+				Vector3 translated = originalPosition + (Vector3.right * x * width + Vector3.forward * z * length);
+				origin.position = translated;
+				GenerateTallTower(origin, currentHeight);
+			}
+		}
+
+		origin.position = originalPosition;
+	}
+
+	void GenerateTallTower(Transform origin, float height) {
 		Transform oldCenter = origin;
 		Transform oldLeft = createNewLeft(oldCenter);
 		Transform oldRight = createNewRight(oldCenter);
@@ -48,7 +55,7 @@ public class PlankSpawn : MonoBehaviour {
 		float rotation = rotationIncrement;
 		Vector3 elevationIncrement = Vector3.up * height;
 
-		for (int i = 0; i < TowerHeight; i++) {
+		for (int i = 0; i < height; i++) {
 			oldLeft = createNewLeft(oldCenter);
 			oldCenter = createNewCenter(oldCenter);
 			oldRight = createNewRight(oldCenter);
@@ -65,25 +72,24 @@ public class PlankSpawn : MonoBehaviour {
 		}
 	}
 
-	Transform createNewLeft(Transform oldCenter) {
-		Transform newLeft = createPlank(oldCenter);
-		newLeft.position += (2 * width) * Vector3.forward;
-		return newLeft;
+	Transform createNewLeft(Transform center) {
+		Transform plank = createPlank(center);
+		createPlank(center).position += (2 * width) * Vector3.forward;
+		return plank;
 	}
 
-	Transform createNewRight(Transform oldCenter) {
-		Transform newRight = createPlank(oldCenter);
-		newRight.position += (2 * width) * Vector3.back;
-		return newRight;
+	Transform createNewRight(Transform center) {
+		Transform plank = createPlank(center);
+		createPlank(center).position += (2 * width) * Vector3.back;
+		return plank;
 	}
 
-	Transform createNewCenter(Transform oldCenter) {
-		return createPlank(oldCenter);
+	Transform createNewCenter(Transform center) {
+		return createPlank(center);
 	}
 
-	Transform createPlank(Transform oldCenter){
-		Vector3 center = oldCenter.transform.position;
-		GameObject newPlank = (GameObject)Instantiate(plankPrefab, center, Quaternion.identity);
-		return newPlank.transform;
+	Transform createPlank(Transform center){
+		GameObject plank = (GameObject)Instantiate(plankPrefab, center.position, Quaternion.identity);
+		return plank.transform;
 	}
 }
